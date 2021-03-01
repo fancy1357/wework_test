@@ -6,6 +6,7 @@ import Home from './views/Home.vue';
 import Welcome from './views/Welcome.vue';
 import Agents from './views/agent/Agents.vue';
 import Interfaces from './views/interface/Interfaces.vue';
+import Users from './views/user/Users.vue';
 
 Vue.use(VueRouter);
 
@@ -28,6 +29,9 @@ const router = new VueRouter({
             },{
                 path: '/interfaces',
                 component: Interfaces
+            },{
+                path: '/users',
+                component: Users
             },]
         },
     ]

@@ -98,7 +98,8 @@ export default {
       // 添加应用的表单规则
       addFormRules: {
         agentname: [
-          { required: true, message: '请输入应用名称', trigger: 'blur' }
+          { required: true, message: '请输入应用名称', trigger: 'blur' }, 
+          { max: 16, message: '应用名称在16个字符以内', trigger: 'blur' },
         ],
         agentid: [
           { required: true, message: '请输入应用ID', trigger: 'blur' }],
@@ -112,10 +113,6 @@ export default {
   methods: {
     async getAgentList() {
       const { data: res } = await this.$axios.get('/search/agents', { params: this.queryInfo });
-      console.log(res);
-      if (res.status != 200) {
-        return this.$message.error();
-      }
       // 获取失败
       if (res.status != 200) return this.$message.error('获取应用列表失败');
       // 获取成功
