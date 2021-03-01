@@ -3,19 +3,32 @@ import VueRouter from 'vue-router';
 
 import Login from './views/Login.vue';
 import Home from './views/Home.vue';
+import Welcome from './views/Welcome.vue';
+import Agents from './views/agent/Agents.vue';
+import Interfaces from './views/interface/Interfaces.vue';
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     // mode: 'history',
-    routes: [
-        {
+    routes: [{
             path: '/login',
             component: Login
         },
         {
             path: '/home',
-            component: Home
+            component: Home,
+            redirect: '/welcome',
+            children: [{
+                path: '/welcome',
+                component: Welcome
+            },{
+                path: '/agents',
+                component: Agents
+            },{
+                path: '/interfaces',
+                component: Interfaces
+            },]
         },
     ]
 });

@@ -6,30 +6,17 @@
         <img src="../assets/logo.png" />
       </div>
       <!-- 表单区域 -->
-      <el-form
-        class="login_form"
-        :model="loginForm"
-        :rules="loginFormRules"
-        ref="loginFormRef"
-      >
+      <el-form class="login_form" :model="loginForm" :rules="loginFormRules" ref="loginFormRef">
         <el-form-item prop="username">
-          <el-input
-            v-model="loginForm.username"
-            prefix-icon="el-icon-user"
-          ></el-input>
+          <el-input v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model="loginForm.password"
-            prefix-icon="el-icon-lock"
-            placeholder="请输入密码"
-            show-password
-          ></el-input>
+          <el-input v-model="loginForm.password" prefix-icon="el-icon-lock" placeholder="请输入密码" show-password></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="login">登录</el-button>
         </el-form-item>
-        <el-form-item size="mini" class="align_right">
+        <el-form-item size="mini" class="link">
           <el-link type="info">忘记密码</el-link>
           <br />
           <el-link type="danger">还没有账号？</el-link>
@@ -63,9 +50,9 @@ export default {
         const { data: res } = await this.$axios.post('/login', this.loginForm);
         console.log(res);
         // 登录失败
-        if (res.status != 200) return this.$message.error(res.message);
+        if (res.status != 200) return this.$message.error({ message: res.message, duration: 1000 });
         // 登录成功
-        this.$message.success(res.message);
+        this.$message.success({ message: res.message, duration: 1000 });
         window.sessionStorage.setItem('token', res.token);
         this.$router.push('/home');
       });
@@ -77,7 +64,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
 .login_container {
-  background-color: rgb(25, 94, 150);
+  background-color: #e9eaeb;
   height: 100%;
 }
 
@@ -118,7 +105,7 @@ export default {
     padding: 0 10px;
     box-sizing: border-box;
 
-    .align_right {
+    .link {
       display: flex;
       justify-content: flex-end;
     }
