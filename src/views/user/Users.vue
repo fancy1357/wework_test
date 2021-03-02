@@ -28,7 +28,7 @@
         <el-table-column prop="create_time" label="创建日期"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.enabled">
+            <el-switch v-model="scope.row.enabled" @change="handleUserStateChange(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
@@ -114,7 +114,6 @@ export default {
   methods: {
     async getUserList() {
       const { data: res } = await this.$axios.get('/search/users', { params: this.queryInfo });
-      console.log(res);
       // 获取失败
       if (res.status != 200) return this.$message.error('获取用户列表失败');
       // 获取成功
@@ -129,7 +128,15 @@ export default {
       this.queryInfo.page = newPage;
       this.getUserList();
     },
-
+    async handleUserStateChange(userInfo) {
+      const { data: res } = await this.$axios.patch(`/users/${userInfo.id}`, { enabled: userInfo.enabled });
+      // 更新失败
+      if (res.status != 200) {
+        userInfo.enabled = !userInfo.enabled;
+        return this.$message.error(res.message);
+      }
+      this.$message.success(res.message);
+    }
   }
 }
 </script>
