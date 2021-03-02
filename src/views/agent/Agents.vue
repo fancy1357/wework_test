@@ -114,7 +114,7 @@ export default {
     async getAgentList() {
       const { data: res } = await this.$axios.get('/search/agents', { params: this.queryInfo });
       // 获取失败
-      if (res.status != 200) return this.$message.error('获取应用列表失败');
+      if (res.status !== 200) return this.$message.error('获取应用列表失败');
       // 获取成功
       this.agentList = res.data.items;
       this.total = res.data.total;
