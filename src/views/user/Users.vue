@@ -9,7 +9,7 @@
     <!-- 卡片视图区域 -->
     <el-card>
       <!-- 添加和搜索区域 -->
-      <el-row>
+      <el-row :gutter="20">
         <el-col :span="8">
           <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
             <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
@@ -28,7 +28,7 @@
         <el-table-column prop="create_time" label="创建日期"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.enabled" @change="handleUserStateChange(scope.row)">
+            <el-switch v-model="scope.row.enabled" @change="userStateChange(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
@@ -36,7 +36,7 @@
           <template slot-scope="scope">
             <!-- 修改用户信息 -->
             <el-tooltip effect="dark" content="修改用户信息" placement="top" :enterable="false">
-              <el-button type="primary" icon="el-icon-edit" circle @click="showEditDialog(scope.row.id)"></el-button>
+              <el-button type="primary" icon="el-icon-edit" circle @click="showEditDialog(scope.row)"></el-button>
             </el-tooltip>
             <!-- 删除用户 -->
             <el-tooltip effect="dark" content="删除用户" placement="top" :enterable="false">
@@ -51,12 +51,12 @@
       </el-table>
 
       <!-- 底部分页区域 -->
-      <el-pagination @size-change="handlePageSizeChange" @current-change="handleCurrentPageChange" :current-page="queryInfo.page" :page-sizes="[1, 2, 5, 10]" :page-size="queryInfo.per_page" layout="total, sizes, prev, pager, next, jumper" :total="total">
+      <el-pagination @size-change="pageSizeChange" @current-change="currentPageChange" :current-page="queryInfo.page" :page-sizes="[1, 2, 5, 10]" :page-size="queryInfo.per_page" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </el-card>
 
     <!-- 添加用户的对话框 -->
-    <el-dialog title="添加用户" @close="handleAddDialogClosed" :visible.sync="addDialogVisible" width="50%" center>
+    <el-dialog title="添加用户" @closed="addDialogClosed" :visible.sync="addDialogVisible" width="50%" center>
       <!-- 添加用户表单区域 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
         <el-form-item label="用户名" prop="username">
@@ -77,7 +77,7 @@
     </el-dialog>
 
     <!-- 编辑用户的对话框 -->
-    <el-dialog title="编辑用户" @close="handleEditDialogClosed" :visible.sync="editDialogVisible" width="50%" center>
+    <el-dialog title="编辑用户" @closed="editDialogClosed" :visible.sync="editDialogVisible" width="50%" center>
       <!-- 编辑用户表单区域 -->
       <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="100px">
         <el-form-item label="用户名" prop="username">
@@ -168,15 +168,15 @@ export default {
       this.userList = res.data.items;
       this.total = res.data.total;
     },
-    handlePageSizeChange(newSize) {
+    pageSizeChange(newSize) {
       this.queryInfo.per_page = newSize;
       this.getUserList();
     },
-    handleCurrentPageChange(newPage) {
+    currentPageChange(newPage) {
       this.queryInfo.page = newPage;
       this.getUserList();
     },
-    async handleUserStateChange(userInfo) {
+    async userStateChange(userInfo) {
       const { data: res } = await this.$axios.patch('/users/' + userInfo.id, { enabled: userInfo.enabled });
       // 更新失败
       if (res.status !== 200) {
@@ -186,14 +186,14 @@ export default {
       this.$message.success(res.message);
     },
     // 监听添加用户对话框的关闭
-    handleAddDialogClosed() {
+    addDialogClosed() {
       this.$refs.addFormRef.resetFields();
     },
     // 监听编辑用户对话框的关闭
-    handleEditDialogClosed() {
+    editDialogClosed() {
       this.$refs.editFormRef.resetFields();
     },
-    // 添加用户对话框点击确定按钮
+    // 添加用户
     addUser() {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return;
@@ -208,14 +208,8 @@ export default {
         this.getUserList();
       });
     },
-    async showEditDialog(id) {
-      this.editDialogVisible = true;
-      // 发起请求查询用户
-      const { data: res } = await this.$axios.get('/users/' + id);
-      if (res.status !== 200) {
-        return this.$message.error(res.message);
-      }
-      this.editForm = res.data;
+    async showEditDialog(user) {
+      this.editForm = Object.assign({}, user);
       this.editDialogVisible = true;
     },
     // 编辑用户对话框点击确定按钮
@@ -247,7 +241,7 @@ export default {
 
       // 删除用户
       const { data: res } = await this.$axios.delete('/users/' + id);
-      if (res.status !== 204) {
+      if (res.status !== 200) {
         return this.$message.error(res.message);
       }
       // 删除成功

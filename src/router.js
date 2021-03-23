@@ -7,6 +7,9 @@ import Welcome from './views/Welcome.vue';
 import Agents from './views/agent/Agents.vue';
 import Interfaces from './views/interface/Interfaces.vue';
 import Users from './views/user/Users.vue';
+// 权限管理
+import Rights from './views/right/Rights.vue';
+import Roles from './views/right/Roles.vue';
 
 Vue.use(VueRouter);
 
@@ -21,18 +24,30 @@ const router = new VueRouter({
             component: Home,
             redirect: '/welcome',
             children: [{
-                path: '/welcome',
-                component: Welcome
-            },{
-                path: '/agents',
-                component: Agents
-            },{
-                path: '/interfaces',
-                component: Interfaces
-            },{
-                path: '/users',
-                component: Users
-            },]
+                    path: '/welcome',
+                    component: Welcome
+                },
+                {
+                    path: '/agents',
+                    component: Agents
+                },
+                {
+                    path: '/interfaces',
+                    component: Interfaces
+                },
+                {
+                    path: '/users',
+                    component: Users
+                },
+                {
+                    path: '/rights',
+                    component: Rights
+                },
+                {
+                    path: '/roles',
+                    component: Roles
+                },
+            ]
         },
     ]
 });
